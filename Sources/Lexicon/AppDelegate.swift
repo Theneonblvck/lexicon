@@ -42,10 +42,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         // Step 5: global Tab interception → insert the armed suggestion.
         eventTap.isArmed = { [weak self] in self?.overlay?.armedSuggestion != nil }
         eventTap.onAcceptTab = { [weak self] in
-            guard let self, let s = self.overlay?.armedSuggestion else { return }
+            guard let self, let s = self.overlay?.armedSuggestion, s.kind.isInsertable else { return }
             let method = Inserter.insert(s, into: self.captureEngine?.focusedElementRef())
             FileLog.write("accepted via Tab [\(method)]: \"\(s.replacement)\"")
-            self.overlay?.dismiss()
+            self.overlay?.acceptArmed()
         }
         eventTap.onOtherKey = { [weak self] in self?.overlay?.dismissGhost() }
 

@@ -1,8 +1,7 @@
 import AppKit
 
 /// Launched via `Lexicon --demo-ui`. Shows the ghost text + suggestions panel
-/// with a mock AnalysisResult so the Step 4 UI can be verified visually without
-/// Accessibility, a focused field, or live API calls.
+/// with mock data covering all three suggestion kinds and a +N more overflow row.
 final class DemoAppDelegate: NSObject, NSApplicationDelegate {
     private var overlay: OverlayController?
 
@@ -15,15 +14,34 @@ final class DemoAppDelegate: NSObject, NSApplicationDelegate {
             goalLabel: "Express professional approval and suggest continuation",
             confidence: 0.87,
             suggestions: [
-                Suggestion(original: "went good",
+                Suggestion(kind: .cadence,
+                           original: nil,
+                           replacement: "",
+                           rationale: "The closing feels abrupt — a softer transition would land better."),
+                Suggestion(kind: .vocabulary,
+                           original: "went good",
                            replacement: "went well",
                            rationale: "Standard formal phrasing for evaluating outcomes."),
-                Suggestion(original: "do it again sometime",
+                Suggestion(kind: .syntax,
+                           original: "do it again sometime",
                            replacement: "schedule a follow-up",
                            rationale: "More concrete and action-oriented than the casual phrasing."),
-                Suggestion(original: "i think",
+                Suggestion(kind: .vocabulary,
+                           original: "i think",
                            replacement: "I believe",
                            rationale: "Elevates formality appropriate for professional feedback."),
+                Suggestion(kind: .syntax,
+                           original: nil,
+                           replacement: "in the near term",
+                           rationale: "Adds temporal specificity to the suggestion."),
+                Suggestion(kind: .vocabulary,
+                           original: "good",
+                           replacement: "productive",
+                           rationale: "Stronger evaluative vocabulary for stakeholders."),
+                Suggestion(kind: .syntax,
+                           original: "we should",
+                           replacement: "I recommend we",
+                           rationale: "Signals considered judgment in professional tone."),
             ])
 
         let screen = NSScreen.main?.frame ?? NSRect(x: 0, y: 0, width: 1440, height: 900)
@@ -31,14 +49,14 @@ final class DemoAppDelegate: NSObject, NSApplicationDelegate {
         NSApp.activate(ignoringOtherApps: true)
         controller.present(mock, caret: caret)
 
-        // Self-snapshot the rendered panel for verification, then re-arm a
-        // different suggestion to prove selection updates the armed state.
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
             controller.debugSnapshotPanel(to: "/tmp/lexicon-panel.pdf")
-            controller.arm(mock.suggestions[1])
+            // Re-arm second insertable (index 1 is cadence; index 2 is syntax)
+            controller.arm(mock.suggestions[2])
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                 controller.debugSnapshotPanel(to: "/tmp/lexicon-panel-armed2.pdf")
                 NSLog("[Lexicon] demo armed=\(controller.armedSuggestion?.replacement ?? "nil")")
+                NSApp.terminate(nil)
             }
         }
     }

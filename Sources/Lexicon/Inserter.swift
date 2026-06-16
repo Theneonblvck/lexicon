@@ -19,6 +19,7 @@ enum Inserter {
 
     @discardableResult
     static func insert(_ suggestion: Suggestion, into element: AXUIElement?) -> String {
+        guard suggestion.kind.isInsertable else { return "skipped-cadence" }
         let target = element ?? freshFocusedElement()
         if let element = target, let method = applyAX(suggestion, to: element) {
             return method

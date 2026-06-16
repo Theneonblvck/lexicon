@@ -39,10 +39,14 @@ struct ClaudeAPIClient {
         Respond with ONLY a JSON object — no prose, no markdown, no code fences — \
         matching exactly this shape:
         {"goalId":"kebab-slug","goalLabel":"Human readable goal","confidence":0.0,\
-        "suggestions":[{"original":"span being improved or empty string if additive",\
-        "replacement":"better word or phrase","rationale":"one line: why it serves the goal"}]}
+        "suggestions":[{"kind":"vocabulary|syntax|cadence",\
+        "original":"span being improved or empty string if additive",\
+        "replacement":"better word or phrase (empty for cadence-only commentary)",\
+        "rationale":"one line: why it serves the goal"}]}
         Rules: suggestions ranked best-first, at most 6; confidence is between 0 and 1; \
-        each replacement should be directly insertable at the caret.
+        classify each item as vocabulary (word choice), syntax (grammar/structure), or \
+        cadence (flow/rhythm observation — may have empty replacement and is not inserted); \
+        vocabulary and syntax replacements must be directly insertable at the caret.
         """
         let userText = "The caret is at character offset \(caret).\n\nText:\n\(text)"
 

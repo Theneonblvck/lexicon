@@ -27,7 +27,7 @@ if let idx = CommandLine.arguments.firstIndex(of: "--analyze") {
             print("confidence=\(r.confidence)")
             print("suggestions (\(r.suggestions.count)):")
             for s in r.suggestions {
-                print("  • [\(s.original ?? "")] → \(s.replacement)   (\(s.rationale))")
+                print("  • [\(s.kind.rawValue)] [\(s.original ?? "")] → \(s.replacement)   (\(s.rationale))")
             }
         } catch {
             print("ERROR: \(error)")
